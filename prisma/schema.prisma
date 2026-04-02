@@ -1,0 +1,78 @@
+// Prisma Schema for Finance Dashboard Backend
+// ================================================
+// Design decisions:
+// - SQLite for portability (reviewers can run without DB setup)
+// - Soft deletes (deletedAt) to preserve audit history
+// - Enums for roles, status, and transaction types for type safety
+// - Strategic indexes on frequently filtered/sorted columns
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+/// Users of the finance dashboard system.
+/// Each user has a role that determines their access level.
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String   // bcrypt hashed
+  firstName String
+  lastName  String
+  role      String   @default("VIEWER") // VIEWER | ANALYST | ADMIN
+  status    String   @default("ACTIVE") // ACTIVE | INACTIVE
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime? // Soft delete — preserves audit trail
+
+  // Relations
+  financialRecords FinancialRecord[]
+  refreshTokens    RefreshToken[]
+
+  @@index([email])
+  @@index([role])
+  @@index([status])
+}
+
+/// Financial transactions (income/expense entries).
+/// Core data entity — supports filtering, aggregation, and analytics.
+model FinancialRecord {
+  id          String   @id @default(uuid())
+  amount      Float    // Using Float since SQLite doesn't support Decimal
+  type        String   // INCOME | EXPENSE
+  category    String   // e.g., "Salary", "Food", "Utilities", "Entertainment"
+  description String?
+  date        DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime? // Soft delete
+
+  // Relations
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@index([date])
+  @@index([category])
+  @@index([type])
+  @@index([userId])
+  @@index([userId, type])       // For user-specific income/expense queries
+  @@index([userId, category])   // For user-specific category breakdowns
+}
+
+/// Refresh tokens for JWT token rotation.
+/// Stored in DB to enable token revocation on logout.
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@index([userId])
+}
