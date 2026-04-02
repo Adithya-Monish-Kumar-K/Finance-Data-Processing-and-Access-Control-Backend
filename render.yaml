@@ -1,0 +1,21 @@
+# Render Blueprint — Infrastructure as Code
+# Deploy with: "New Web Service" → connect this repo → auto-detected
+
+services:
+  - type: web
+    name: finance-dashboard-api
+    runtime: node
+    plan: free
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: bash scripts/start.sh
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: DATABASE_URL
+        value: file:./dev.db
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true

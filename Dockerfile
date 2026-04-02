@@ -1,34 +1,49 @@
-# Build stage
-FROM node:22-alpine AS builder
+# ── Build Stage ───────────────────────────────────────
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+# Copy package files
 COPY package*.json ./
+COPY prisma ./prisma/
+
+# Install all dependencies (including devDependencies for build)
 RUN npm ci
 
-COPY prisma ./prisma
+# Generate Prisma client
 RUN npx prisma generate
 
+# Copy source files
 COPY tsconfig.json ./
-COPY src ./src
+COPY src ./src/
+
+# Build TypeScript
 RUN npm run build
 
-# Production stage
-FROM node:22-alpine
+# ── Production Stage ──────────────────────────────────
+FROM node:20-alpine
 
 WORKDIR /app
 
+# Copy package files and install production deps only
 COPY package*.json ./
 RUN npm ci --omit=dev
 
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY prisma ./prisma
+# Copy Prisma schema and generate client for production
+COPY prisma ./prisma/
+RUN npx prisma generate
 
-ENV NODE_ENV=production
+# Copy built output and startup script
+COPY --from=builder /app/dist ./dist/
+COPY scripts ./scripts/
+RUN chmod +x scripts/start.sh
+
+# Expose port
 EXPOSE 3000
 
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/v1/health || exit 1
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
+  CMD wget -q --spider http://localhost:3000/api/v1/health || exit 1
 
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/server.js"]
+# Start with migration + seed + server
+CMD ["bash", "scripts/start.sh"]

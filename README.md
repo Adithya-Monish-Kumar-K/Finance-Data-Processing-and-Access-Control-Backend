@@ -4,6 +4,8 @@ A well-structured, well-reasoned finance dashboard backend built with **Node.js*
 
 > **Design Philosophy**: Every technical choice in this project has a purpose. A well-reasoned solution is valued more than unnecessary complexity.
 
+**📖 API Documentation**: [Live Swagger Docs](https://finance-dashboard-api-zorvyn.onrender.com/api-docs) · **🌐 Live API**: [https://finance-dashboard-api-zorvyn.onrender.com](https://finance-dashboard-api-zorvyn.onrender.com)
+
 ---
 
 ## 🚀 Quick Start
@@ -12,8 +14,8 @@ A well-structured, well-reasoned finance dashboard backend built with **Node.js*
 
 ```bash
 # 1. Clone and install
-git clone <repo-url>
-cd finance-backend
+git clone https://github.com/Adithya-Monish-Kumar-K/Finance-Data-Processing-and-Access-Control-Backend.git
+cd Finance-Data-Processing-and-Access-Control-Backend
 npm install
 
 # 2. Set up database
@@ -31,6 +33,16 @@ The server starts at **http://localhost:3000** and API docs at **http://localhos
 ```bash
 docker-compose up --build
 ```
+
+### Option 3: Live API (Cloud)
+
+The API is deployed on Render and available for immediate testing:
+
+- **Base URL**: `https://finance-dashboard-api-zorvyn.onrender.com`
+- **Swagger Docs**: `https://finance-dashboard-api-zorvyn.onrender.com/api-docs`
+- **Health Check**: `https://finance-dashboard-api-zorvyn.onrender.com/api/v1/health`
+
+> Note: The free tier may take ~30 seconds to cold-start on first request.
 
 ### Pre-seeded Test Credentials
 
@@ -213,6 +225,22 @@ tests/
 - **WebSocket** for real-time dashboard updates
 - **CI/CD pipeline** (GitHub Actions) for automated testing and deployment
 - **Load testing** (k6 or Artillery) to verify rate limiting effectiveness
+
+---
+
+## ☁️ Cloud Deployment
+
+The application is deployed on **Render** using the included `render.yaml` Blueprint:
+
+- SQLite runs on Render's ephemeral filesystem
+- The startup script (`scripts/start.sh`) runs migrations and seeds the database on every deploy
+- JWT secrets are auto-generated per deployment
+
+To deploy your own instance:
+1. Fork this repo
+2. Create a new Web Service on [Render](https://render.com)
+3. Connect your fork → Render auto-detects `render.yaml`
+4. Click Deploy
 
 ---
 
