@@ -25,9 +25,9 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy package files and install production deps only
+# Copy package files and install production deps + tsx (needed for seed script)
 COPY package*.json ./
-RUN npm ci --omit=dev
+RUN npm ci --omit=dev && npm install tsx
 
 # Copy Prisma schema and generate client for production
 COPY prisma ./prisma/
@@ -46,4 +46,4 @@ HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
   CMD wget -q --spider http://localhost:3000/api/v1/health || exit 1
 
 # Start with migration + seed + server
-CMD ["bash", "scripts/start.sh"]
+ENTRYPOINT ["sh", "scripts/start.sh"]
