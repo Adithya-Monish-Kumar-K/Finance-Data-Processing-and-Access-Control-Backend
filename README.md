@@ -4,7 +4,7 @@ A well-structured, well-reasoned finance dashboard backend built with **Node.js*
 
 > **Design Philosophy**: Every technical choice in this project has a purpose. A well-reasoned solution is valued more than unnecessary complexity.
 
-**📖 API Documentation**: [Live Swagger Docs](https://finance-dashboard-api-zorvyn.onrender.com/api-docs) · **🌐 Live API**: [https://finance-dashboard-api-zorvyn.onrender.com](https://finance-dashboard-api-zorvyn.onrender.com)
+**📖 API Documentation**: [Live Swagger Docs](https://finance-data-processing-and-access-yxda.onrender.com/api-docs) · **🌐 Live API**: [https://finance-data-processing-and-access-yxda.onrender.com](https://finance-data-processing-and-access-yxda.onrender.com)
 
 ---
 
@@ -38,9 +38,9 @@ docker-compose up --build
 
 The API is deployed on Render and available for immediate testing:
 
-- **Base URL**: `https://finance-dashboard-api-zorvyn.onrender.com`
-- **Swagger Docs**: `https://finance-dashboard-api-zorvyn.onrender.com/api-docs`
-- **Health Check**: `https://finance-dashboard-api-zorvyn.onrender.com/api/v1/health`
+- **Base URL**: `https://finance-data-processing-and-access-yxda.onrender.com`
+- **Swagger Docs**: `https://finance-data-processing-and-access-yxda.onrender.com/api-docs`
+- **Health Check**: `https://finance-data-processing-and-access-yxda.onrender.com/api/v1/health`
 
 > Note: The free tier may take ~30 seconds to cold-start on first request.
 
