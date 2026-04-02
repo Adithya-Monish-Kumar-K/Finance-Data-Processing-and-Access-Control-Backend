@@ -19,6 +19,8 @@ services:
         generateValue: true
       - key: JWT_REFRESH_SECRET
         generateValue: true
+      - key: RENDER_EXTERNAL_URL
+        value: https://finance-data-processing-and-access-yxda.onrender.com
       - key: JWT_EXPIRES_IN
         value: 15m
       - key: JWT_REFRESH_EXPIRES_IN

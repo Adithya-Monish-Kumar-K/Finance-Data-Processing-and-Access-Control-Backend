@@ -34,7 +34,20 @@ import healthRoutes from './routes/health.routes';
 const app = express();
 
 // ── Security ────────────────────────────────────────────────
-app.use(helmet());
+// Configure Helmet with CSP that allows Swagger UI to work properly
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", 'data:'],
+        connectSrc: ["'self'"],
+      },
+    },
+  })
+);
 app.use(cors());
 
 // ── Logging ─────────────────────────────────────────────────

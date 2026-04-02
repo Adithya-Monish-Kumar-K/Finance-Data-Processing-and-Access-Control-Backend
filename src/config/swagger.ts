@@ -1,11 +1,21 @@
 import swaggerJsdoc from 'swagger-jsdoc';
 
+import config from './index';
+
 /**
  * Swagger/OpenAPI configuration.
  * 
  * Generates API documentation from JSDoc annotations in route files.
  * Served at /api-docs when the server is running.
+ * 
+ * Server URL is dynamic — uses the deployed URL in production and
+ * localhost in development.
  */
+
+// Build servers list dynamically
+const servers = config.nodeEnv === 'production'
+  ? [{ url: process.env.RENDER_EXTERNAL_URL || `https://${process.env.RENDER_SERVICE_NAME || 'localhost'}.onrender.com`, description: 'Production server' }]
+  : [{ url: `http://localhost:${config.port}`, description: 'Development server' }];
 
 const options: swaggerJsdoc.Options = {
   definition: {
@@ -33,12 +43,7 @@ All protected endpoints require a JWT Bearer token in the Authorization header:
         name: 'API Support',
       },
     },
-    servers: [
-      {
-        url: 'http://localhost:3000',
-        description: 'Development server',
-      },
-    ],
+    servers,
     components: {
       securitySchemes: {
         bearerAuth: {
@@ -87,7 +92,7 @@ All protected endpoints require a JWT Bearer token in the Authorization header:
       },
     },
   },
-  apis: ['./src/routes/*.ts'],
+  apis: ['./src/routes/*.ts', './dist/routes/*.js'],
 };
 
 export const swaggerSpec = swaggerJsdoc(options);
