@@ -73,9 +73,9 @@ src/
 ### Layered Architecture
 
 ```
-Request → Middleware (Auth → Authorize → Validate) → Controller → Service → Prisma → SQLite
-                                                                            ↓
-Response ← Error Handler ← Controller                              ← Response
+Request  → Middleware (Auth → Authorize → Validate) → Controller → Service → Prisma → SQLite
+                                                          ↑                              ↓
+Response ← Error Handler ←──────────────────────── Controller ← Service ← Prisma ← Response
 ```
 
 **Why this structure?** Separation of concerns. Controllers handle HTTP concerns (request parsing, response formatting), services handle business logic (data operations, rules), and middleware handles cross-cutting concerns (auth, validation). This means:
